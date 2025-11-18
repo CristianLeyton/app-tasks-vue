@@ -84,8 +84,8 @@ npm install
 npm run dev
 ```
 
-El frontend estará disponible en  
-👉 http://localhost:5173
+Aplicacion disponible en  
+👉 http://127.0.0.1:8000
 
 ---
 
@@ -99,6 +99,9 @@ El frontend estará disponible en
 
 Cada uno tiene permisos diferentes según las reglas implementadas.
 
+- `admin` → puede ver, crear, editar y eliminar todas las tareas.
+- `editor` → puede crear, editar y eliminar **solo sus tareas**.
+- `viewer` → puede **solo ver** sus tareas.
 ---
 
 ## 🧩 Características del Proyecto
