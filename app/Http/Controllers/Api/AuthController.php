@@ -26,6 +26,7 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
+        $user->assignRole('editor');
         $user->save();
         //respuesta
         return response($user, Response::HTTP_CREATED);
@@ -46,28 +47,53 @@ class AuthController extends Controller
             //respuesta
             return response(["message" => "Sesión iniciada", "token" => $token], Response::HTTP_OK);
         } else {
-            return response([
-                "message" => "Las credenciales no son válidas"
-            ], 
-            Response::HTTP_UNAUTHORIZED);
+            return response(
+                [
+                    "message" => "Las credenciales no son válidas"
+                ],
+                Response::HTTP_UNAUTHORIZED
+            );
         }
     }
 
     public function userProfile(Request $request)
     {
-        return response()->json([
-            "userProfile" => Auth::user()
-        ], 
-        Response::HTTP_OK);
+        $user = Auth::user();
+        /** @disregard */
+        $role = $user->getRoleNames()->first();
+
+        return response()->json(
+            [
+                "userProfile" => $user,
+                "role" => $role
+            ],
+            Response::HTTP_OK
+        );
+    }
+
+    public function getUsers()
+    {
+        /** @disregard */
+        if (Auth::user()->hasRole('admin')) {
+            $users = User::with('roles')->get();
+            /** @disregard */
+            return response()->json($users, Response::HTTP_OK);
+        } else {
+            return response()->json([
+                "message" => "No autorizado"
+            ], Response::HTTP_FORBIDDEN);
+        }
     }
 
     public function logout(Request $request)
     {
-/*         $request->user()->tokens()->delete(); */
-        $request->user()->currentAccessToken()->delete(); 
-        return response([
-            "message" => "Sesión cerrada"
-        ], 
-        Response::HTTP_OK);
+        /*         $request->user()->tokens()->delete(); */
+        $request->user()->currentAccessToken()->delete();
+        return response(
+            [
+                "message" => "Sesión cerrada"
+            ],
+            Response::HTTP_OK
+        );
     }
 }

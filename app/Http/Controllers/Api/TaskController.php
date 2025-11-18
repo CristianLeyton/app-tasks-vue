@@ -36,28 +36,28 @@ class TaskController extends Controller
         $this->authorize('create', Task::class);
 
         $request->validate([
-            'title' => 'required',
-            'description' => 'required',
+            'title' => 'nullable|string',
+            'description' => 'nullable|string',
             'status' => 'nullable|in:pending,in_progress,completed',
             'due_date' => 'nullable|date',
-            'user_id' => 'nullable|exists:users,id'
         ]);
-
-        //Si es admin puede asignar la tarea a otro usuario
-        $user = Auth::user();
-        /** @disregard */
-        if ($user->hasRole('admin')) {
-            $user_id = $request->input('user_id', $user->id);
-        } else {
-            $user_id = $user->id;
-        }
 
         $task = new Task();
         $task->title = $request->title;
         $task->description = $request->description;
         $task->status = $request->input('status', 'pending');
         $task->due_date = $request->due_date;
-        $task->user_id = $user_id;
+        //Si es admin puede asignar la tarea a otro usuario
+        $user = Auth::user();
+        /** @disregard */
+        if ($user->hasRole('admin') && $request->filled('user_id')) {
+            $request->validate([
+                'user_id' => 'exists:users,id'
+            ]);
+            $task->user_id = $request->user_id;
+        } else {
+            $task->user_id = $user->id;
+        }
         $task->save();
 
         return response()->json([
@@ -93,17 +93,27 @@ class TaskController extends Controller
         // Valida permisos con la Policy
         $this->authorize('update', $task);
 
-        $task->title = $request->title ? $request->title : $task->title;
-        $task->description = $request->description ? $request->description : $task->description;
-        $task->status = $request->status ?? $task->status;
+        // Si el campo viene en el request, lo actualizo (aunque sea null)
+        if ($request->has('title')) {
+            $task->title = $request->title;
+        }
+        if ($request->has('description')) {
+            $task->description = $request->description;
+        }
+        if ($request->has('status')) {
+            $task->status = $request->status;
+        }
+        if ($request->has('due_date')) {
+            $task->due_date = $request->due_date;
+        }
 
         //Si es admin, puedo cambiar el user_id siempre y cuando lo envíe en la petición
         /** @disregard */
-        if (Auth::user()->hasRole('admin')) {
-            $request->validate($request, [
+        if (Auth::user()->hasRole('admin') && $request->has('user_id')) {
+            $request->validate([
                 'user_id' => 'nullable|exists:users,id'
             ]);
-            $task->user_id = $request->user_id ? $request->user_id : $task->user_id;
+            $task->user_id = $request->user_id;
         }
 
         $task->due_date = $request->due_date ? $request->due_date : $task->due_date;

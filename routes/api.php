@@ -13,6 +13,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user-profile', [AuthController::class, 'userProfile']);
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('get-users', [AuthController::class, 'getUsers']);
 
     //Rutas de tareas
     Route::get('list-tasks', [TaskController::class, 'index']);
