@@ -1,4 +1,4 @@
-# 📝 Task Manager – README
+# 📝 Tasks App Vue – README
 
 Proyecto full-stack desarrollado con **Laravel (API REST)** y **Vue.js 3**, con gestión de usuarios, roles y un sistema completo de tareas.
 
