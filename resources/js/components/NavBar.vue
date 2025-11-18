@@ -6,10 +6,10 @@
 
     <div class="flex gap-2">
     <router-link v-if="user.role == 'admin'" to="/" class="hover:bg-neutral-900 active:bg-neutral-700 cursor-pointer flex items-center gap-1 px-3 py-1 text-sm text-white rounded bg-neutral-800">
-      Inicio
+      Tareas
     </router-link>
     <router-link v-if="user.role == 'admin'" to="/panel" class="hover:bg-neutral-900 active:bg-neutral-700 cursor-pointer flex items-center gap-1 px-3 py-1 text-sm text-white rounded bg-neutral-800">
-      Panel
+      Usuarios
     </router-link>
     <button v-if="loggedIn" @click="logout" class="hover:bg-neutral-900 active:bg-neutral-700 cursor-pointer flex items-center gap-1 px-3 py-1 text-sm text-white rounded bg-neutral-800"><log-out-icon class="text-white size-4"/>Salir</button>
     </div>

@@ -11,9 +11,12 @@ Route::post('login', [AuthController::class, 'login']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    //Rutas de usuarios
     Route::get('user-profile', [AuthController::class, 'userProfile']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('get-users', [AuthController::class, 'getUsers']);
+    Route::put('user-update-role/{id}', [AuthController::class, 'updateUserRole']);
+    Route::post('user-delete/{id}', [AuthController::class, 'deleteUser']);
 
     //Rutas de tareas
     Route::get('list-tasks', [TaskController::class, 'index']);

@@ -56,12 +56,11 @@ class AuthController extends Controller
         }
     }
 
-    public function userProfile(Request $request)
+    public function userProfile()
     {
         $user = Auth::user();
         /** @disregard */
         $role = $user->getRoleNames()->first();
-
         return response()->json(
             [
                 "userProfile" => $user,
@@ -95,5 +94,52 @@ class AuthController extends Controller
             ],
             Response::HTTP_OK
         );
+    }
+
+    public function updateUserRole(Request $request, $id)
+    {
+        /** @disregard */
+        if (Auth::user()->hasRole('admin')) {
+            $user = User::find($id);
+            if ($user) {
+                $request->validate([
+                    'role' => 'required|in:admin,editor,viewer'
+                ]);
+                $user->syncRoles([$request->role]);
+                return response()->json([
+                    "message" => "Rol actualizado"
+                ], Response::HTTP_OK);
+            } else {
+                return response()->json([
+                    "message" => "Usuario no encontrado"
+                ], Response::HTTP_NOT_FOUND);
+            }
+        } else {
+            return response()->json([
+                "message" => "No autorizado"
+            ], Response::HTTP_FORBIDDEN);
+        }
+    }
+
+    public function deleteUser($id)
+    {
+        /** @disregard */
+        if (Auth::user()->hasRole('admin')) {
+            $user = User::find($id);
+            if ($user) {
+                $user->delete();
+                return response()->json([
+                    "message" => "Usuario eliminado"
+                ], Response::HTTP_OK);
+            } else {
+                return response()->json([
+                    "message" => "Usuario no encontrado"
+                ], Response::HTTP_NOT_FOUND);
+            }
+        } else {
+            return response()->json([
+                "message" => "No autorizado"
+            ], Response::HTTP_FORBIDDEN);
+        }
     }
 }

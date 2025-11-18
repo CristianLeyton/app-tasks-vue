@@ -28,12 +28,20 @@
     </ul>
 
     <ul v-else class="mt-4 rounded-xl border border-neutral-200 overflow-hidden ">
+      <!-- Tareas  -->
       <li v-for="task in filteredTasks" :key="task.id"
         class="px-4 py-2 odd:bg-neutral-100 even:bg-neutral-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h2 class="font-semibold">{{ task.title }} <span class="text-xs text-neutral-500 font-normal">({{
-            statusLabels[task.status] }})</span></h2>
-          <p class="text-sm">{{ task.description || 'Sin descripción' }}</p>
+          <h2 class="font-semibold" :class="{
+            'text-green-500': task.status === 'completed',
+            'text-orange-400': task.status === 'in_progress'
+          }">{{ task.title }} <span class="text-xs text-neutral-500 font-normal">
+              ({{ statusLabels[task.status] }})</span>
+            <span v-if="task.status === 'completed'"> ✔ </span>
+            <span v-if="task.status === 'in_progress'"> ⏳ </span>
+          </h2>
+          <p class="text-sm">{{ task.description || 'Sin descripción' }}
+          </p>
         </div>
         <div class="flex gap-1 self-end sm:self-auto">
           <button class="border border-neutral-300 px-2 py-1 rounded text-sm cursor-pointer hover:bg-white"
@@ -55,9 +63,8 @@
     </ul>
 
     <!-- Modal de crear tarea -->
-    <dialog ref="taskCreateModal"
-      class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
-      <create-task-form :user="user"/>
+    <dialog ref="taskCreateModal" class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
+      <create-task-form :user="user" />
       <div class="mt-4 flex justify-end">
         <button @click="closeCreateModal()"
           class="bg-neutral-100 px-3 py-1 rounded hover:bg-neutral-200 active:bg-neutral-200 cursor-pointer">Cerrar</button>
@@ -65,8 +72,7 @@
     </dialog>
 
     <!-- Modal de ver detalles de la tarea -->
-    <dialog ref="taskViewModal"
-      class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
+    <dialog ref="taskViewModal" class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
       <h2 class="font-semibold text-lg">{{ selectedTask.title }}</h2>
       <p class="mt-2">{{ selectedTask.description }}</p>
       <p class="mt-1 text-sm">Estado: {{ statusLabels[selectedTask.status] }}</p>
@@ -81,8 +87,7 @@
     </dialog>
 
     <!-- Modal de editar tarea -->
-    <dialog ref="taskEditModal"
-      class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
+    <dialog ref="taskEditModal" class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
       <edit-task-form :task="selectedTask" :key="selectedTask.id" />
       <div class="mt-4 flex justify-end">
         <button @click="closeEditModal()"
@@ -91,8 +96,7 @@
     </dialog>
 
     <!-- Modal de eliminar tarea -->
-    <dialog ref="taskDeleteModal"
-      class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
+    <dialog ref="taskDeleteModal" class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
       <h2 class="font-semibold text-lg text-red-600">¿Eliminar "{{ selectedTask.title }}"?</h2>
       <p class="mt-2">{{ selectedTask.description }}</p>
       <p class="mt-1 text-sm">Estado: {{ statusLabels[selectedTask.status] }}</p>
@@ -111,7 +115,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed} from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import NavBar from '../components/NavBar.vue';
 import CreateTaskForm from '../components/CreateTaskForm.vue';
 import EditTaskForm from '../components/EditTaskForm.vue';
@@ -212,7 +216,7 @@ async function fetchTasks() {
 
     const data = await response.json();
     if (response.ok) {
-      tasks.value = data; 
+      tasks.value = data;
     } else {
       console.error('Error fetching tasks:', data.message);
     }
