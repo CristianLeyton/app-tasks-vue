@@ -72,6 +72,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import NavBar from '../components/NavBar.vue';
+import { all } from 'axios';
 
 const editUserModal = ref(null); // referencia al dialog edit
 const deleteUserModal = ref(null); // referencia al dialog delete
@@ -80,7 +81,8 @@ const selectedUserRole = ref(null); // rol seleccionado en el modal de editar
 const user = ref({
     name: "",
     email: "",
-    role: ""
+    role: "",
+    id: null
 });
 
 const allusers = ref([]); // lista de todos los usuarios 
@@ -139,6 +141,7 @@ async function getUserProfile() {
             user.value.name = data.userProfile.name;
             user.value.email = data.userProfile.email;
             user.value.role = data.role;
+            user.value.id = data.userProfile.id;
         }
     } catch (error) {
         console.error("Connection error:", error);
@@ -160,8 +163,9 @@ async function getAllUsers() {
         const data = await response.json();
 
         if (response.ok) {
-            allusers.value = data;
-            //console.log(allusers.value);
+            // Filtrar para no mostrar el usuario con ID 1 y el usuario actual
+            allusers.value = data.filter(
+                u => u.id !== 1 && u.id !== user.value.id);
         }
     } catch (error) {
         console.error("Connection error:", error);
@@ -199,6 +203,7 @@ async function editRoleUser(id) {
 
 // Eliminar usuario
 async function confirmDeleteUser(id) {
+
     try {
         const response = await fetch(`/api/user-delete/${id}`, {
             method: "POST",

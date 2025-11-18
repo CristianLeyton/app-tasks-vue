@@ -123,8 +123,9 @@ class AuthController extends Controller
 
     public function deleteUser($id)
     {
+        // Evitar que un admin se borre a sí mismo o al usuario con ID 1
         /** @disregard */
-        if (Auth::user()->hasRole('admin')) {
+        if (Auth::user()->hasRole('admin') && Auth::user()->id != $id && $id != 1) { 
             $user = User::find($id);
             if ($user) {
                 $user->delete();
