@@ -2,8 +2,8 @@
   <MainLayout titleH1="Listado de tareas" v-slot="{user}">
     <div class="mt-2 flex justify-between items-center">
       <div class="text-sm flex items-center gap-1">
-        Filtrar por estado:
-        <select v-model="filterStatus" class="border border-neutral-400 rounded py-1 px-1.5 ml-2">
+        Mostrar:
+        <select v-model="filterStatus" class="border border-neutral-400 rounded py-1 px-1.5 ">
           <option value="all">Todas</option>
           <option value="pending">Pendientes</option>
           <option value="in_progress">En progreso</option>
@@ -27,13 +27,17 @@
       <li v-for="task in filteredTasks" :key="task.id"
         class="px-4 py-2 odd:bg-neutral-100 even:bg-neutral-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h2 class="font-semibold" :class="{
+          <h2 class="font-semibold flex items-center gap-1" :class="{
             'text-green-500': task.status === 'completed',
             'text-orange-400': task.status === 'in_progress'
           }">{{ task.title }} <span class="text-xs text-neutral-500 font-normal">
               ({{ statusLabels[task.status] }})</span>
-            <span v-if="task.status === 'completed'"> ✔ </span>
-            <span v-if="task.status === 'in_progress'"> ⏳ </span>
+            <span v-if="task.status === 'completed'"> 
+              <task-completed-icon class="size-5" /> 
+            </span>
+            <span v-if="task.status === 'in_progress'"> 
+              <task-in-progress-icon class="size-6" />
+            </span>
           </h2>
           <p class="text-sm">{{ task.description || 'Sin descripción' }}
           </p>
@@ -74,8 +78,12 @@
           'text-green-500': selectedTask.status === 'completed',
           'text-orange-400': selectedTask.status === 'in_progress'
         }">{{ selectedTask.title }}
-          <span v-if="selectedTask.status === 'completed'"> ✔ </span>
-          <span v-if="selectedTask.status === 'in_progress'"> ⏳ </span>
+          <span v-if="selectedTask.status === 'completed'"> 
+            <task-completed-icon class="size-5" />
+          </span>
+          <span v-if="selectedTask.status === 'in_progress'"> 
+            <task-in-progress-icon class="size-6" />
+          </span>
         </h2>
         <p class="mt-2">{{ selectedTask.description }}</p>
         <p class="mt-1 text-sm">Estado: {{ statusLabels[selectedTask.status] }}</p>
@@ -129,7 +137,8 @@ import EditIcon from '../components/icons/EditIcon.vue';
 import DeleteIcon from '../components/icons/DeleteIcon.vue';
 import MainLayout from '../components/layouts/MainLayout.vue';
 import NewTaskIcon from '../components/icons/NewTaskIcon.vue';
-import FilterIcon from '../components/icons/FilterIcon.vue';
+import TaskCompletedIcon from '../components/icons/TaskCompletedIcon.vue';
+import TaskInProgressIcon from '../components/icons/TaskInProgressIcon.vue';
 
 const tasks = ref([]);
 

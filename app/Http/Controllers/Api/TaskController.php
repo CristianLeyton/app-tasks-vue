@@ -36,7 +36,7 @@ class TaskController extends Controller
         $this->authorize('create', Task::class);
 
         $request->validate([
-            'title' => 'nullable|string',
+            'title' => 'required|string',
             'description' => 'nullable|string',
             'status' => 'nullable|in:pending,in_progress,completed',
             'due_date' => 'nullable|date',
@@ -94,6 +94,13 @@ class TaskController extends Controller
         $this->authorize('update', $task);
 
         // Si el campo viene en el request, lo actualizo (aunque sea null)
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'status' => 'nullable|in:pending,in_progress,completed',
+            'due_date' => 'nullable|date',
+        ]);
+
         if ($request->has('title')) {
             $task->title = $request->title;
         }

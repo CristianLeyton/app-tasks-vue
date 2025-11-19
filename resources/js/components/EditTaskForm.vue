@@ -61,13 +61,15 @@ async function editTask() {
       body: JSON.stringify(formEdit.value)
     });
 
+    const data = await response.json(); 
     if (!response.ok) {
-      throw new Error("Error al editar la tarea.");
+      throw data;
     }
+
     //Refrescar la lista de tareas
     dispatchEvent(new Event('tasksUpdated'));
   } catch (error) {
-    console.error("Error al crear la tarea:", error);
+    console.error("Error al editar la tarea:", error.message);
   }
 }
 </script>

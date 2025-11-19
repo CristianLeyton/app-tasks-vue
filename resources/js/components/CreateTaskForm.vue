@@ -73,8 +73,9 @@ async function createTask() {
       body: JSON.stringify(formCreate.value)
     });
 
+    const data = await response.json(); 
     if (!response.ok) {
-      throw new Error("Error al crear la tarea.");
+      throw data;
     }
 
     //Refrescar la lista de tareas
@@ -87,7 +88,7 @@ async function createTask() {
       user_id: ""
     };
   } catch (error) {
-    console.error("Error al crear la tarea:", error);
+    console.error("Error al crear la tarea:", error.message);
   }
 }
 

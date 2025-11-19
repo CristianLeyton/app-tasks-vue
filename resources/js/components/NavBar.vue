@@ -10,18 +10,18 @@
 
     <div class="flex gap-2" v-if="loggedIn">
       <div v-if="user.role == 'admin'" class="flex gap-2">
-      <router-link to="/"
+      <router-link to="/" title="Listado de tareas"
         class="hover:bg-neutral-900 active:bg-neutral-700 cursor-pointer flex items-center gap-1 px-3 py-1 text-sm text-white rounded bg-neutral-800">
-        <pad-icon class="text-white size-5" />Tareas
+        <pad-icon class="text-white size-5" /><span class="hidden sm:block">Tareas</span>
       </router-link>
-      <router-link to="/panel"
+      <router-link to="/panel" title="Administrar usuarios"
         class="hover:bg-neutral-900 active:bg-neutral-700 cursor-pointer flex items-center gap-1 px-3 py-1 text-sm text-white rounded bg-neutral-800">
-        <users-icon class="text-white size-5" />Usuarios
+        <users-icon class="text-white size-5" /><span class="hidden sm:block">Usuarios</span>
       </router-link>
       </div>
-      <button @click="logout"
+      <button @click="logout" title="Cerras sesión"
         class="hover:bg-neutral-900 active:bg-neutral-700 cursor-pointer flex items-center gap-1 px-3 py-1 text-sm text-white rounded bg-neutral-800">
-        <log-out-icon class="text-white size-5" />Salir</button>
+        <log-out-icon class="text-white size-5" /><span class="hidden sm:block">Salir</span></button>
     </div>
   </nav>
 </template>
