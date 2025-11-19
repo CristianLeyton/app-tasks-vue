@@ -20,7 +20,7 @@ Asegurate de tener instalado:
 
 ## 📥 Instalación del Backend (Laravel)
 
-### 1️⃣ Clonar el repositorio
+### 1️⃣ Clonar el repositorio en la carpeta de tu cliente php
 ```bash
 git clone https://github.com/CristianLeyton/app-tasks-vue.git
 cd app-tasks-vue

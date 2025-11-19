@@ -1,24 +1,19 @@
 <template>
-  <nav-bar :user="user" />
-  <div class="container p-6 border-b border-neutral-300">
-    <header class="flex justify-between items-center">
-      <h2 class="text-lg font-semibold">Listado de tareas</h2>
-    </header>
-
+  <MainLayout titleH1="Listado de tareas" v-slot="{user}">
     <div class="mt-2 flex justify-between items-center">
-      <div class="text-sm">
+      <div class="text-sm flex items-center gap-1">
         Filtrar por estado:
-        <select v-model="filterStatus" class="border rounded py-1 px-1.5 ml-2">
+        <select v-model="filterStatus" class="border border-neutral-400 rounded py-1 px-1.5 ml-2">
           <option value="all">Todas</option>
           <option value="pending">Pendientes</option>
           <option value="in_progress">En progreso</option>
           <option value="completed">Completadas</option>
         </select>
       </div>
-      <button v-if="user.role !== 'viewer'"
-        class="bg-neutral-800 text-white px-3 py-1 rounded hover:bg-neutral-900 active:bg-neutral-700 cursor-pointer"
+      <button v-if="user.role !== 'viewer'" title="Crear nueva tarea"
+        class="bg-neutral-800 text-white px-3 py-1 rounded flex items-center gap-1 hover:bg-neutral-900 active:bg-neutral-700 cursor-pointer text-sm"
         @click="openCreateModal()">
-        Nueva
+        <new-task-icon class="text-white size-5" /><span class="">Nueva</span>
       </button>
     </div>
     <ul v-if="filteredTasks.length === 0">
@@ -44,19 +39,20 @@
           </p>
         </div>
         <div class="flex gap-1 self-end sm:self-auto">
-          <button class="border border-neutral-300 px-2 py-1 rounded text-sm cursor-pointer hover:bg-white"
+          <button title="Ver detalles"
+            class="border border-neutral-300 px-2 py-1 rounded text-sm cursor-pointer hover:bg-white"
             @click="openViewModal(task)">
-            Ver
+            <detail-icon class="size-4.5 text-gray-500" />
           </button>
-          <button v-if="user.role !== 'viewer'"
+          <button title="Editar tarea" v-if="user.role !== 'viewer'"
             class="border border-neutral-300 px-2 py-1 rounded text-sm cursor-pointer bg-neutral-800 text-white hover:bg-neutral-900 active:bg-neutral-700"
             @click="openEditModal(task)">
-            Editar
+            <edit-icon class="size-4.5 text-white" />
           </button>
-          <button v-if="user.role !== 'viewer'"
+          <button title="Eliminar tarea" v-if="user.role !== 'viewer'"
             class="border border-neutral-300 px-2 py-1 rounded text-sm cursor-pointer bg-red-600 text-white hover:bg-red-500 active:bg-red-700 "
             @click="openDeleteModal(task)">
-            Eliminar
+            <delete-icon class="size-4.5 text-white" />
           </button>
         </div>
       </li>
@@ -73,12 +69,20 @@
 
     <!-- Modal de ver detalles de la tarea -->
     <dialog ref="taskViewModal" class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
-      <h2 class="font-semibold text-lg">{{ selectedTask.title }}</h2>
-      <p class="mt-2">{{ selectedTask.description }}</p>
-      <p class="mt-1 text-sm">Estado: {{ statusLabels[selectedTask.status] }}</p>
-      <p v-if="selectedTask.due_date" class="mt-1 text-sm">Fecha límite: {{ selectedTask.due_date }}</p>
-      <p v-if="selectedTask.user?.name" class="mt-2 text-sm"> Asignado a: {{ selectedTask.user?.name }} ({{
-        selectedTask.user?.email }})</p>
+      <div class="border border-neutral-400 rounded-lg p-4">
+        <h2 class="font-semibold text-lg flex items-center justify-between" :class="{
+          'text-green-500': selectedTask.status === 'completed',
+          'text-orange-400': selectedTask.status === 'in_progress'
+        }">{{ selectedTask.title }}
+          <span v-if="selectedTask.status === 'completed'"> ✔ </span>
+          <span v-if="selectedTask.status === 'in_progress'"> ⏳ </span>
+        </h2>
+        <p class="mt-2">{{ selectedTask.description }}</p>
+        <p class="mt-1 text-sm">Estado: {{ statusLabels[selectedTask.status] }}</p>
+        <p v-if="selectedTask.due_date" class="mt-1 text-sm">Fecha límite: {{ selectedTask.due_date }}</p>
+        <p v-if="selectedTask.user?.name" class="mt-2 text-sm"> Asignado a: {{ selectedTask.user?.name }} ({{
+          selectedTask.user?.email }})</p>
+      </div>
 
       <div class="mt-4 flex justify-end">
         <button @click="closeViewModal()"
@@ -97,13 +101,14 @@
 
     <!-- Modal de eliminar tarea -->
     <dialog ref="taskDeleteModal" class="p-6 rounded-xl border border-neutral-300 w-96 inset-0 m-auto">
-      <h2 class="font-semibold text-lg text-red-600">¿Eliminar "{{ selectedTask.title }}"?</h2>
-      <p class="mt-2">{{ selectedTask.description }}</p>
-      <p class="mt-1 text-sm">Estado: {{ statusLabels[selectedTask.status] }}</p>
-      <p v-if="selectedTask.due_date" class="mt-1 text-sm">Fecha límite: {{ selectedTask.due_date }}</p>
-      <p v-if="selectedTask.user?.name" class="mt-2 text-sm"> Asignado a: {{ selectedTask.user?.name }} ({{
-        selectedTask.user?.email }})</p>
-
+      <div class="border border-neutral-400 rounded-lg p-4">
+        <h2 class="font-semibold text-lg text-red-600">¿Eliminar "{{ selectedTask.title }}"?</h2>
+        <p class="mt-2">{{ selectedTask.description }}</p>
+        <p class="mt-1 text-sm">Estado: {{ statusLabels[selectedTask.status] }}</p>
+        <p v-if="selectedTask.due_date" class="mt-1 text-sm">Fecha límite: {{ selectedTask.due_date }}</p>
+        <p v-if="selectedTask.user?.name" class="mt-2 text-sm"> Asignado a: {{ selectedTask.user?.name }} ({{
+          selectedTask.user?.email }})</p>
+      </div>
       <div class="mt-4 flex justify-end">
         <button @click="confirmDelete()"
           class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500 active:bg-red-700 cursor-pointer mr-2">Eliminar</button>
@@ -111,21 +116,22 @@
           class="bg-neutral-100 px-3 py-1 rounded hover:bg-neutral-200 active:bg-neutral-200 cursor-pointer">Cerrar</button>
       </div>
     </dialog>
-  </div>
+
+  </MainLayout>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import NavBar from '../components/NavBar.vue';
+import { ref, computed } from 'vue';
 import CreateTaskForm from '../components/CreateTaskForm.vue';
 import EditTaskForm from '../components/EditTaskForm.vue';
+import DetailIcon from '../components/icons/DetailIcon.vue';
+import EditIcon from '../components/icons/EditIcon.vue';
+import DeleteIcon from '../components/icons/DeleteIcon.vue';
+import MainLayout from '../components/layouts/MainLayout.vue';
+import NewTaskIcon from '../components/icons/NewTaskIcon.vue';
+import FilterIcon from '../components/icons/FilterIcon.vue';
 
 const tasks = ref([]);
-const user = ref({
-  name: "",
-  email: "",
-  role: ""
-});
 
 const selectedTask = ref({}); // tarea seleccionada para el modal
 const taskCreateModal = ref(null); // referencia al dialog create
@@ -134,11 +140,7 @@ const taskEditModal = ref(null); // referencia al dialog edit
 const taskDeleteModal = ref(null); // referencia al dialog delete
 const filterStatus = ref('all');
 
-
-onMounted(() => {
-  getUserProfile();
-  fetchTasks();
-});
+fetchTasks();
 
 const statusLabels = { pending: "Pendiente", in_progress: "En progreso", completed: "Completada" };
 
@@ -177,30 +179,6 @@ function closeDeleteModal() {
   taskDeleteModal.value.close();
 }
 
-// Obtener perfil de usuario
-async function getUserProfile() {
-  try {
-    const response = await fetch("/api/user-profile", {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
-      }
-    });
-
-    const data = await response.json();
-
-    /*     console.log(data); */
-    if (response.ok) {
-      user.value.name = data.userProfile.name;
-      user.value.email = data.userProfile.email;
-      user.value.role = data.role;
-    }
-  } catch (error) {
-    console.error("Connection error:", error);
-  }
-
-}
 
 // Obtener lista de tareas
 async function fetchTasks() {
