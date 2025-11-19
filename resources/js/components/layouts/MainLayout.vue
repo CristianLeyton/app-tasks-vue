@@ -5,7 +5,7 @@
             <slot name="header"><h1>{{ props.titleH1 }}</h1></slot>
         </h2>
     </header>
-    <main class="container p-6 border-b border-neutral-300" :user="user">
+    <main class="container p-6 border-b border-neutral-300 text-pretty" :user="user">
         <slot :user="user" />
     </main>
 </template>
