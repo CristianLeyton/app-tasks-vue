@@ -1,5 +1,5 @@
 <template>
-  <MainLayout titleH1="Listado de tareas" v-slot="{user}">
+  <MainLayout titleH1="Listado de tareas" v-slot="{ user }">
     <div class="mt-2 flex justify-between items-center">
       <div class="text-sm flex items-center gap-1">
         Mostrar:
@@ -27,17 +27,21 @@
       <li v-for="task in filteredTasks" :key="task.id"
         class="px-4 py-2 odd:bg-neutral-100 even:bg-neutral-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h2 class="font-semibold flex items-center gap-1" :class="{
+          <h2 class="font-semibold flex items-center gap-1 justify-between sm:justify-normal" :class="{
             'text-green-500': task.status === 'completed',
             'text-orange-400': task.status === 'in_progress'
-          }">{{ task.title }} <span class="text-xs text-neutral-500 font-normal">
-              ({{ statusLabels[task.status] }})</span>
-            <span v-if="task.status === 'completed'"> 
-              <task-completed-icon class="size-5" /> 
-            </span>
-            <span v-if="task.status === 'in_progress'"> 
-              <task-in-progress-icon class="size-6" />
-            </span>
+          }">{{ task.title }}
+
+            <div class="flex items-center gap-1">
+              <span class="text-xs text-neutral-500 font-normal">
+                ({{ statusLabels[task.status] }})</span>
+              <span v-if="task.status === 'completed'">
+                <task-completed-icon class="size-5" />
+              </span>
+              <span v-if="task.status === 'in_progress'">
+                <task-in-progress-icon class="size-6" />
+              </span>
+            </div>
           </h2>
           <p class="text-sm">{{ task.description || 'Sin descripción' }}
           </p>
@@ -78,10 +82,10 @@
           'text-green-500': selectedTask.status === 'completed',
           'text-orange-400': selectedTask.status === 'in_progress'
         }">{{ selectedTask.title }}
-          <span v-if="selectedTask.status === 'completed'"> 
+          <span v-if="selectedTask.status === 'completed'">
             <task-completed-icon class="size-5" />
           </span>
-          <span v-if="selectedTask.status === 'in_progress'"> 
+          <span v-if="selectedTask.status === 'in_progress'">
             <task-in-progress-icon class="size-6" />
           </span>
         </h2>

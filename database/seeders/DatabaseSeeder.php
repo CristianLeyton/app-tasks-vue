@@ -9,6 +9,7 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -58,8 +59,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'viewer@mail.com',
             'password' => Hash::make('viewer')
         ]);
-
         //Le asigno el rol
         $viewer->assignRole('viewer');
+
+        $this->call(TasksSeeder::class);
     }
 }
